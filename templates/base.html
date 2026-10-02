@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Tickets de TI{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <header class="barra-superior">
+        <div class="marca">
+            <a href="{% url 'dashboard:index' %}">🎫 Tickets TI</a>
+        </div>
+        <nav class="menu">
+            {% if es_staff_tickets %}
+            <a href="{% url 'dashboard:index' %}">Dashboard</a>
+            {% endif %}
+            <a href="{% url 'tickets:lista' %}">Tickets</a>
+            <a href="{% url 'tickets:crear' %}">Nuevo ticket</a>
+            {% if es_admin %}
+            <a href="{% url 'accounts:lista_usuarios' %}">Usuarios</a>
+            <a href="/admin/">Admin</a>
+            {% endif %}
+        </nav>
+        <div class="sesion">
+            <span class="usuario">{{ user.username }}</span>
+            <form action="{% url 'accounts:logout' %}" method="post" class="form-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link">Salir</button>
+            </form>
+        </div>
+    </header>
+    {% endif %}
+
+    <main class="contenido">
+        {% if messages %}
+        <div class="mensajes">
+            {% for message in messages %}
+            <div class="mensaje mensaje-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="pie">
+        <small>Sistema de Tickets de TI — Django {{ "" }}5.2 LTS</small>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Ticket #{{ ticket.id }} — Tickets TI{% endblock %}
+
+{% block content %}
+<div class="encabezado-seccion">
+    <h1>Ticket #{{ ticket.id }}</h1>
+    <a href="{% url 'tickets:lista' %}" class="btn">← Volver</a>
+</div>
+
+<div class="detalle-grid">
+    <div class="tarjeta">
+        <h2>{{ ticket.titulo }}</h2>
+        <p class="descripcion">{{ ticket.descripcion|linebreaks }}</p>
+
+        <h3>Comentarios / Historial</h3>
+        <div class="comentarios">
+            {% for c in comentarios %}
+            <div class="comentario">
+                <div class="comentario-cabecera">
+                    <strong>{{ c.autor.username|default:"(usuario eliminado)" }}</strong>
+                    <span class="fecha">{{ c.creado|date:"d/m/Y H:i" }}</span>
+                </div>
+                <div class="comentario-cuerpo">{{ c.texto|linebreaks }}</div>
+            </div>
+            {% empty %}
+            <p class="vacio">Aún no hay comentarios.</p>
+            {% endfor %}
+        </div>
+
+        <form method="post" action="{% url 'tickets:comentar' ticket.id %}" class="form-comentario">
+            {% csrf_token %}
+            {{ comentario_form.texto }}
+            <button type="submit" class="btn btn-primario">Comentar</button>
+        </form>
+    </div>
+
+    <aside class="tarjeta panel-lateral">
+        <h3>Detalles</h3>
+        <dl>
+            <dt>Estado</dt>
+            <dd><span class="estado estado-{{ ticket.estado }}">{{ ticket.get_estado_display }}</span></dd>
+            <dt>Prioridad</dt>
+            <dd><span class="prioridad prioridad-{{ ticket.prioridad }}">{{ ticket.get_prioridad_display }}</span></dd>
+            <dt>Solicitante</dt>
+            <dd>{{ ticket.solicitante.username }}</dd>
+            <dt>Agente</dt>
+            <dd>{{ ticket.agente.username|default:"Sin asignar" }}</dd>
+            <dt>Creado</dt>
+            <dd>{{ ticket.creado|date:"d/m/Y H:i" }}</dd>
+            <dt>Actualizado</dt>
+            <dd>{{ ticket.actualizado|date:"d/m/Y H:i" }}</dd>
+            {% if ticket.resuelto_en %}
+            <dt>Resuelto en</dt>
+            <dd>{{ ticket.resuelto_en|date:"d/m/Y H:i" }}</dd>
+            {% endif %}
+        </dl>
+
+        {% if puede_gestionar %}
+        <hr>
+        <h3>Acciones</h3>
+
+        {% if estado_form.nuevo_estado.field.choices %}
+        <form method="post" action="{% url 'tickets:cambiar_estado' ticket.id %}" class="accion">
+            {% csrf_token %}
+            <label>Cambiar estado</label>
+            {{ estado_form.nuevo_estado }}
+            <button type="submit" class="btn btn-pequeno">Aplicar</button>
+        </form>
+        {% else %}
+        <p class="vacio">Este ticket está cerrado; no admite más cambios de estado.</p>
+        {% endif %}
+
+        <form method="post" action="{% url 'tickets:asignar_agente' ticket.id %}" class="accion">
+            {% csrf_token %}
+            <label>Asignar agente</label>
+            {{ agente_form.agente }}
+            <button type="submit" class="btn btn-pequeno">Asignar</button>
+        </form>
+
+        <form method="post" action="{% url 'tickets:autoasignarme' ticket.id %}" class="accion">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-pequeno">Autoasignarme</button>
+        </form>
+        {% endif %}
+    </aside>
+</div>
+{% endblock %}

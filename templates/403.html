@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Acceso denegado{% endblock %}
+{% block content %}
+<div class="tarjeta" style="max-width:520px;margin:40px auto;text-align:center;">
+    <h1>403 — Acceso denegado</h1>
+    <p>{{ exception }}</p>
+    <p><a href="{% url 'dashboard:index' %}" class="btn btn-primario">Ir al inicio</a></p>
+</div>
+{% endblock %}

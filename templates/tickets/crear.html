@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo ticket — Tickets TI{% endblock %}
+
+{% block content %}
+<div class="encabezado-seccion">
+    <h1>Crear ticket</h1>
+    <a href="{% url 'tickets:lista' %}" class="btn">← Volver</a>
+</div>
+
+<div class="tarjeta form-tarjeta">
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="campo">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}<div class="error">{{ field.errors|striptags }}</div>{% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primario">Crear ticket</button>
+    </form>
+</div>
+{% endblock %}

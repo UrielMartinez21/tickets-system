@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo usuario — Tickets TI{% endblock %}
+
+{% block content %}
+<div class="encabezado-seccion">
+    <h1>Crear usuario</h1>
+    <a href="{% url 'accounts:lista_usuarios' %}" class="btn">← Volver</a>
+</div>
+
+<div class="tarjeta form-tarjeta">
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="campo">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<small class="ayuda">{{ field.help_text|safe }}</small>{% endif %}
+            {% if field.errors %}<div class="error">{{ field.errors|striptags }}</div>{% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primario">Crear usuario</button>
+    </form>
+</div>
+{% endblock %}

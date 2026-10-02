@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — Tickets TI{% endblock %}
+
+{% block content %}
+<div class="encabezado-seccion">
+    <h1>Dashboard de analítica</h1>
+    <div class="exportaciones">
+        <a href="{% url 'dashboard:exportar_tickets' %}" class="btn btn-pequeno">⬇ Tickets CSV</a>
+        <a href="{% url 'dashboard:exportar_usuarios' %}" class="btn btn-pequeno">⬇ Usuarios CSV</a>
+        <a href="{% url 'dashboard:exportar_metricas' %}" class="btn btn-pequeno">⬇ Métricas CSV</a>
+    </div>
+</div>
+
+<div class="tarjetas-resumen">
+    <div class="tarjeta-metrica">
+        <span class="numero">{{ total_tickets }}</span>
+        <span class="etiqueta-metrica">Tickets totales</span>
+    </div>
+    <div class="tarjeta-metrica">
+        <span class="numero">{{ total_usuarios }}</span>
+        <span class="etiqueta-metrica">Usuarios</span>
+    </div>
+    <div class="tarjeta-metrica">
+        <span class="numero">{{ abiertos }}</span>
+        <span class="etiqueta-metrica">Abiertos</span>
+    </div>
+    <div class="tarjeta-metrica">
+        <span class="numero">{{ cerrados }}</span>
+        <span class="etiqueta-metrica">Cerrados</span>
+    </div>
+    <div class="tarjeta-metrica">
+        <span class="numero">{{ ultimos_30_dias }}</span>
+        <span class="etiqueta-metrica">Últimos 30 días</span>
+    </div>
+    <div class="tarjeta-metrica">
+        <span class="numero">
+            {% if promedio_resolucion_horas is not None %}{{ promedio_resolucion_horas }}h{% else %}N/A{% endif %}
+        </span>
+        <span class="etiqueta-metrica">Prom. resolución</span>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <div class="tarjeta">
+        <h3>Tickets por estado</h3>
+        <table class="tabla">
+            <thead><tr><th>Estado</th><th>Total</th></tr></thead>
+            <tbody>
+                {% for etiqueta, total in por_estado %}
+                <tr><td>{{ etiqueta }}</td><td>{{ total }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tarjeta">
+        <h3>Tickets por prioridad</h3>
+        <table class="tabla">
+            <thead><tr><th>Prioridad</th><th>Total</th></tr></thead>
+            <tbody>
+                {% for etiqueta, total in por_prioridad %}
+                <tr><td>{{ etiqueta }}</td><td>{{ total }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tarjeta">
+        <h3>Usuarios por rol</h3>
+        <table class="tabla">
+            <thead><tr><th>Rol</th><th>Usuarios</th></tr></thead>
+            <tbody>
+                {% for rol, total in usuarios_por_rol %}
+                <tr><td>{{ rol }}</td><td>{{ total }}</td></tr>
+                {% empty %}
+                <tr><td colspan="2">Sin datos.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tarjeta">
+        <h3>Tickets por agente</h3>
+        <table class="tabla">
+            <thead><tr><th>Agente</th><th>Tickets</th></tr></thead>
+            <tbody>
+                {% for agente, total in tickets_por_agente %}
+                <tr><td>{{ agente }}</td><td>{{ total }}</td></tr>
+                {% empty %}
+                <tr><td colspan="2">Ningún ticket asignado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
